@@ -4,8 +4,8 @@
 export LANG=en_US.UTF-8
 
 # 检查 Python 命令是否存在
-if ! command -v python3.11 &> /dev/null; then
-    echo "Python 3.11 未安装，请先安装 Python 3.11"
+if ! command -v python3 &> /dev/null; then
+    echo "未检测到 Python 3，请先安装 Python 3"
     exit 1
 fi
 
