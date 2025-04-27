@@ -3,12 +3,6 @@
 # 设置 UTF-8 编码
 export LANG=en_US.UTF-8
 
-# 检查 Python 命令是否存在
-if ! command -v python3 &> /dev/null; then
-    echo "未检测到 Python 3，请先安装 Python 3"
-    exit 1
-fi
-
 # 检查并创建虚拟环境
 if [ ! -d "venv" ]; then
     echo "创建 Python 3.11 虚拟环境..."
