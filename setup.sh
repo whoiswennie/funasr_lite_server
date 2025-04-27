@@ -56,7 +56,7 @@ fi
 
 # 安装其他依赖项（使用清华源加速）
 echo "正在安装其他依赖项..."
-pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple --trusted-host pypi.tuna.tsinghua.edu.cn
+pip install -r requirements_linux.txt -i https://pypi.tuna.tsinghua.edu.cn/simple --trusted-host pypi.tuna.tsinghua.edu.cn
 
 # 处理 ali-cloud-sdk-core 的兼容性问题
 echo "安装 aliyun-python-sdk-core（兼容性修复）..."
