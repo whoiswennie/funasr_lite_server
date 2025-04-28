@@ -37,8 +37,8 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "0" if DEVICE == "cuda" else ""
 logger.info(f"当前运行设备: {DEVICE}")
 
 # 初始化ASR模型
-#asr_model = AutoModel(model="paraformer-zh", model_revision="v2.0.4")
-asr_model = AutoModel(model="iic/SenseVoiceSmall")
+asr_model = AutoModel(model="paraformer-zh", model_revision="v2.0.4")
+#asr_model = AutoModel(model="iic/SenseVoiceSmall")
 asr_model.model.to(DEVICE)
 logger.info("ASR 模型加载完成")
 
