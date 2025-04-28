@@ -32,7 +32,7 @@ install_others() {
     
     # 启动服务
     echo "服务已启动..."
-    python3 funasr_server.py 2>&1 | tee server.log &
+    python3 funasr_server.py --host 0.0.0.0 --port 8086 2>&1 | tee server.log &
     
     echo "按Ctrl+C退出..."
     wait
