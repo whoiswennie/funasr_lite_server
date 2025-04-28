@@ -1,64 +1,67 @@
 #!/bin/bash
 
-# 设置 UTF-8 编码
+# 设置UTF-8编码
 export LANG=en_US.UTF-8
 
 # 检查并创建虚拟环境
 if [ ! -d "venv" ]; then
-    echo "创建 Python 3.11 虚拟环境..."
+    echo "创建Python 3.11虚拟环境..."
     python3.11 -m venv venv
-    . venv/bin/activate
-    
-    # 安装 PyTorch
-    echo "请选择 PyTorch 版本："
-    echo "1. GPU 版本（需要 NVIDIA 显卡）"
-    echo "2. CPU 版本"
-    read -p "请选择 (1/2): " choice
-    
-    if [ "$choice" = "1" ]; then
-        echo "安装 GPU 版本的 PyTorch..."
-        pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
-    else
-        echo "安装 CPU 版本的 PyTorch..."
-        pip install torch torchvision torchaudio -i https://pypi.tuna.tsinghua.edu.cn/simple
-    fi
+    source venv/bin/activate
+    install_pytorch
 else
     echo "激活现有虚拟环境..."
-    . venv/bin/activate
-    
-    # 检查 PyTorch 是否已安装
-    if python3 -c "import torch" &> /dev/null; then
-        echo "PyTorch 已安装，跳过安装步骤..."
+    source venv/bin/activate
+    # 检查PyTorch是否已安装
+    python3 -c "import torch" >/dev/null 2>&1
+    if [ $? -eq 0 ]; then
+        echo "PyTorch已安装，跳过安装步骤..."
+        install_others
     else
-        # 安装 PyTorch
-        echo "请选择 PyTorch 版本："
-        echo "1. GPU 版本（需要 NVIDIA 显卡）"
-        echo "2. CPU 版本"
-        read -p "请选择 (1/2): " choice
-        
-        if [ "$choice" = "1" ]; then
-            echo "安装 GPU 版本的 PyTorch..."
-            pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
-        else
-            echo "安装 CPU 版本的 PyTorch..."
-            pip install torch torchvision torchaudio -i https://pypi.tuna.tsinghua.edu.cn/simple
-        fi
+        install_pytorch
     fi
 fi
 
-# 安装系统依赖
-echo "安装系统依赖..."
-sudo apt-get update
-sudo apt-get install -y portaudio19-dev libasound2-dev python3-dev
+function install_pytorch() {
+    echo "请选择PyTorch版本："
+    echo "1. GPU版本（需要NVIDIA显卡）"
+    echo "2. CPU版本"
+    read -p "请选择 (1/2): " choice
 
-# 安装其他依赖项
-echo "正在安装其他依赖项..."
-pip install --upgrade pip setuptools wheel
-pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
+    case $choice in
+        1)
+            echo "安装GPU版本的PyTorch..."
+            pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
+            ;;
+        2)
+            echo "安装CPU版本的PyTorch..."
+            pip install torch torchvision torchaudio -i https://pypi.tuna.tsinghua.edu.cn/simple
+            ;;
+        *)
+            echo "无效选择，默认安装CPU版本"
+            pip install torch torchvision torchaudio -i https://pypi.tuna.tsinghua.edu.cn/simple
+            ;;
+    esac
 
-# 启动服务
-echo "服务已启动..."
-python3 funasr_server.py
+    install_others
+}
 
-# 保持终端运行
-read -p "按回车键退出..." dummy
+function install_others() {
+    echo "正在安装其他依赖项..."
+    pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
+    
+    # 启动服务
+    echo "服务已启动..."
+    python3 funasr_server.py 2>&1 | tee server.log &
+    
+    echo "按Ctrl+C退出..."
+    wait
+}
+
+# 主程序入口
+main() {
+    # 这里可以添加额外的初始化代码
+    :
+}
+
+main "$@"
