@@ -1,28 +1,8 @@
 #!/bin/bash
 
-# 设置UTF-8编码
 export LANG=en_US.UTF-8
 
-# 检查并创建虚拟环境
-if [ ! -d "venv" ]; then
-    echo "创建Python 3.11虚拟环境..."
-    python3.11 -m venv venv
-    source venv/bin/activate
-    install_pytorch
-else
-    echo "激活现有虚拟环境..."
-    source venv/bin/activate
-    # 检查PyTorch是否已安装
-    python3 -c "import torch" >/dev/null 2>&1
-    if [ $? -eq 0 ]; then
-        echo "PyTorch已安装，跳过安装步骤..."
-        install_others
-    else
-        install_pytorch
-    fi
-fi
-
-function install_pytorch() {
+install_pytorch() {
     echo "请选择PyTorch版本："
     echo "1. GPU版本（需要NVIDIA显卡）"
     echo "2. CPU版本"
@@ -46,7 +26,7 @@ function install_pytorch() {
     install_others
 }
 
-function install_others() {
+install_others() {
     echo "正在安装其他依赖项..."
     pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
     
@@ -58,10 +38,20 @@ function install_others() {
     wait
 }
 
-# 主程序入口
-main() {
-    # 这里可以添加额外的初始化代码
-    :
-}
-
-main "$@"
+# 主程序
+if [ ! -d "venv" ]; then
+    echo "创建Python 3.11虚拟环境..."
+    python3.11 -m venv venv
+    source venv/bin/activate
+    install_pytorch
+else
+    echo "激活现有虚拟环境..."
+    source venv/bin/activate
+    python3 -c "import torch" >/dev/null 2>&1
+    if [ $? -eq 0 ]; then
+        echo "PyTorch已安装，跳过安装步骤..."
+        install_others
+    else
+        install_pytorch
+    fi
+fi
